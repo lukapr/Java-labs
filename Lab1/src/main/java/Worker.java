@@ -13,23 +13,31 @@ public class Worker {
     private static ArrayList<Product> products = new ArrayList<Product>();
     private static ArrayList<Colour> colours = new ArrayList<Colour>();
 
-    public static void generateResult(String pathToProducts, String pathToColours) throws IOException, Lab1Exception {
+    public static void generateFileWithResult(String pathToProducts, String pathToColours) throws Lab1Exception, IOException {
+        Set<Product> resultSet = generateResult(pathToProducts, pathToColours);
+        File file = new File("result.txt");
+        try {
+            if (!file.exists()) {
+                file.createNewFile();
+            }
+            PrintWriter out = new PrintWriter(file.getAbsoluteFile());
+            try {
+                out.print(genarateStringForResult(resultSet));
+            } finally {
+                out.close();
+            }
+        } catch (IOException e) {
+            throw new IOException("Error during writing to result file");
+        }
+    }
+
+    public static  Set<Product> generateResult(String pathToProducts, String pathToColours) throws Lab1Exception, IOException {
         getAllProducts(pathToProducts);
         if (products.size() == 0) {
             throw new Lab1Exception("All files in folder with products is broken. Path: " + pathToProducts);
         }
         getAllColours(pathToColours);
-        Set<Product> resultSet = getResult();
-        File file = new File("result.txt");
-        if (!file.exists()) {
-            file.createNewFile();
-        }
-        PrintWriter out = new PrintWriter(file.getAbsoluteFile());
-        try {
-            out.print(genarateStringForResult(resultSet));
-        } finally {
-            out.close();
-        }
+        return getResult();
     }
 
     private static String genarateStringForResult(Set<Product> resultSet) {
@@ -56,26 +64,30 @@ public class Worker {
     }
 
     private static void getAllColours(String pathToColours) throws Lab1Exception, IOException {
-        File file = new File(pathToColours);
-        if (!file.exists()) {
-            return;
-        }
-        BufferedReader in = new BufferedReader(new FileReader(file.getAbsoluteFile()));
-
         try {
-            String s;
-            while ((s = in.readLine()) != null) {
-                if (checkLineIsCorrect(s)) {
-                    String[] split = s.split(" ");
-                    Colour colour = new Colour(split[0], Integer.parseInt(split[1]));
-                    if (!colours.contains(colour)) {
-                        colours.add(colour);
+            File file = new File(pathToColours);
+            if (!file.exists()) {
+                return;
+            }
+            BufferedReader in = new BufferedReader(new FileReader(file.getAbsoluteFile()));
+
+            try {
+                String s;
+                while ((s = in.readLine()) != null) {
+                    if (checkLineIsCorrect(s)) {
+                        String[] split = s.split(" ");
+                        Colour colour = new Colour(split[0], Integer.parseInt(split[1]));
+                        if (!colours.contains(colour)) {
+                            colours.add(colour);
+                        }
                     }
                 }
+            } finally {
+                //Также не забываем закрыть файл
+                in.close();
             }
-        } finally {
-            //Также не забываем закрыть файл
-            in.close();
+        } catch (IOException e) {
+            throw new IOException("Error during reading from file with colours");
         }
     }
 
@@ -107,23 +119,28 @@ public class Worker {
     }
 
     private static ArrayList<Product> getProductsFromFile(File file) throws IOException {
-        BufferedReader in = new BufferedReader(new FileReader(file.getAbsoluteFile()));
-        ArrayList<Product> products = new ArrayList<Product>();
-
         try {
-            String s;
-            while ((s = in.readLine()) != null) {
-                if (checkLineIsCorrect(s)) {
-                    String[] split = s.split(" ");
-                    Product product = new Product(split[0], Integer.parseInt(split[1]));
-                    if (!products.contains(product)) {
-                        products.add(product);
+            BufferedReader in = new BufferedReader(new FileReader(file.getAbsoluteFile()));
+
+            ArrayList<Product> products = new ArrayList<Product>();
+
+            try {
+                String s;
+                while ((s = in.readLine()) != null) {
+                    if (checkLineIsCorrect(s)) {
+                        String[] split = s.split(" ");
+                        Product product = new Product(split[0], Integer.parseInt(split[1]));
+                        if (!products.contains(product)) {
+                            products.add(product);
+                        }
                     }
                 }
+            } finally {
+                //Также не забываем закрыть файл
+                in.close();
             }
-        } finally {
-            //Также не забываем закрыть файл
-            in.close();
+        } catch (IOException e) {
+            throw new IOException("Error during reading from file with products");
         }
         return products;
 
