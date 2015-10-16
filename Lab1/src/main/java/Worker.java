@@ -1,5 +1,3 @@
-package main.java;
-
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Set;
@@ -22,7 +20,7 @@ public class Worker {
             }
             PrintWriter out = new PrintWriter(file.getAbsoluteFile());
             try {
-                out.print(genarateStringForResult(resultSet));
+                out.print(generateStringForResult(resultSet));
             } finally {
                 out.close();
             }
@@ -40,7 +38,7 @@ public class Worker {
         return getResult();
     }
 
-    private static String genarateStringForResult(Set<Product> resultSet) {
+    private static String generateStringForResult(Set<Product> resultSet) {
         String result = "";
         for (Product product : resultSet) {
             result += product.toString();
@@ -119,10 +117,9 @@ public class Worker {
     }
 
     private static ArrayList<Product> getProductsFromFile(File file) throws IOException {
+        ArrayList<Product> productsFromFile = new ArrayList<Product>();
         try {
             BufferedReader in = new BufferedReader(new FileReader(file.getAbsoluteFile()));
-
-            ArrayList<Product> products = new ArrayList<Product>();
 
             try {
                 String s;
@@ -130,8 +127,8 @@ public class Worker {
                     if (checkLineIsCorrect(s)) {
                         String[] split = s.split(" ");
                         Product product = new Product(split[0], Integer.parseInt(split[1]));
-                        if (!products.contains(product)) {
-                            products.add(product);
+                        if (!productsFromFile.contains(product)) {
+                            productsFromFile.add(product);
                         }
                     }
                 }
@@ -142,7 +139,7 @@ public class Worker {
         } catch (IOException e) {
             throw new IOException("Error during reading from file with products");
         }
-        return products;
+        return productsFromFile;
 
     }
 

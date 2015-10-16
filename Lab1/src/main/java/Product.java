@@ -1,14 +1,12 @@
-package main.java;
-
 /**
  * Created by pryaly on 10/16/2015.
  */
 public class Product implements Comparable<Product> {
     private String name;
-    private int price;
+    private double price;
     private int count;
 
-    public Product(String name, int price) {
+    public Product(String name, double price) {
         this.name = name;
         this.price = price;
         count = 1;
@@ -18,16 +16,8 @@ public class Product implements Comparable<Product> {
         return name;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public int getPrice() {
+    public double getPrice() {
         return price;
-    }
-
-    public void setPrice(int price) {
-        this.price = price;
     }
 
     @Override
@@ -50,25 +40,17 @@ public class Product implements Comparable<Product> {
         count++;
     }
 
-    public void increasePrice(int price) {
+    public void increasePrice(double price) {
         this.price += price;
     }
 
     @Override
     public String toString() {
-//        return "Product{" +
-//                "name='" + name + '\'' +
-//                ", price=" + price +
-//                ", count=" + count +
-//                ", totalPrice=" + (double) price / count +
-//                "}\n";
         return name + " " + getResultPrice() + "\n";
     }
 
-    private String getResultPrice() {
-//        double resultPrice = (double) price / count;
-        Double resultPrice = price % count == 0 ? price / count : (double) price / count;
-        return resultPrice.toString();
+    public Double getResultPrice() {
+        return price / count;
     }
 
     @Override
