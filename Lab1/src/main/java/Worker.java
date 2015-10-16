@@ -54,7 +54,7 @@ public class Worker {
         for (Product product : products) {
             for (Colour colour : colours) {
                 Product resultProduct = new Product(product.getName() + "_" + colour.getName(),
-                        product.getPrice() * colour.getPrice());
+                        product.getResultPrice() * colour.getPrice());
                 resultProducts.add(resultProduct);
             }
         }
