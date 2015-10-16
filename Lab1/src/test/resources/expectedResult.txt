@@ -1,0 +1,10 @@
+Book_Green 875.0
+Book_Red 1250.0
+Computer_Green 490.0
+Computer_Red 700.0
+Pen_Green 700.0
+Pen_Red 1000.0
+Pencil_Green 1750.0
+Pencil_Red 2500.0
+Table_Green 913.5
+Table_Red 1305.0

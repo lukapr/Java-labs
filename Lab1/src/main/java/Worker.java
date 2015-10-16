@@ -11,7 +11,7 @@ public class Worker {
     private static ArrayList<Product> products = new ArrayList<Product>();
     private static ArrayList<Colour> colours = new ArrayList<Colour>();
 
-    public static void generateFileWithResult(String pathToProducts, String pathToColours) throws Lab1Exception, IOException {
+    public static void generateFileWithResult(String pathToProducts, String pathToColours) throws IOException {
         Set<Product> resultSet = generateResult(pathToProducts, pathToColours);
         File file = new File("result.txt");
         try {
@@ -29,10 +29,10 @@ public class Worker {
         }
     }
 
-    public static  Set<Product> generateResult(String pathToProducts, String pathToColours) throws Lab1Exception, IOException {
+    public static  Set<Product> generateResult(String pathToProducts, String pathToColours) throws IOException {
         getAllProducts(pathToProducts);
         if (products.size() == 0) {
-            throw new Lab1Exception("All files in folder with products is broken. Path: " + pathToProducts);
+            throw new ProductsException("All files in folder with products is broken. Path: " + pathToProducts);
         }
         getAllColours(pathToColours);
         return getResult();
@@ -61,7 +61,7 @@ public class Worker {
         return resultProducts;
     }
 
-    private static void getAllColours(String pathToColours) throws Lab1Exception, IOException {
+    private static void getAllColours(String pathToColours) throws IOException {
         try {
             File file = new File(pathToColours);
             if (!file.exists()) {
@@ -90,14 +90,14 @@ public class Worker {
     }
 
 
-    private static void getAllProducts(String pathToProducts) throws Lab1Exception, IOException {
+    private static void getAllProducts(String pathToProducts) throws IOException {
         File folder = new File(pathToProducts);
         if (!folder.exists()) {
-            throw new Lab1Exception("Folder with products doesn't exist or path is incorrect. Path: " + pathToProducts);
+            throw new ProductsException("Folder with products doesn't exist or path is incorrect. Path: " + pathToProducts);
         }
         File[] files = folder.listFiles();
         if (files == null || files.length == 0) {
-            throw new Lab1Exception("Folder with products is empty. Path: " + pathToProducts);
+            throw new ProductsException("Folder with products is empty. Path: " + pathToProducts);
         }
         for (File file : files) {
             appendProducts(getProductsFromFile(file));

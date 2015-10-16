@@ -1,0 +1,3 @@
+Table 100
+Computer 70
+Pen 100

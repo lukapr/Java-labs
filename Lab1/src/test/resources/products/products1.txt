@@ -1,0 +1,5 @@
+Table 161
+Pencil 250
+Book 125
+Pen 100
+

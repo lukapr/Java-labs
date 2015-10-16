@@ -1,0 +1,5 @@
+Table 161.0
+Pencil  25r0
+Book rr
+Pen 100 rr
+
