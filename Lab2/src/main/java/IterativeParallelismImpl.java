@@ -2,7 +2,6 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
-import static java.util.stream.Collectors.reducing;
 import static java.util.stream.Collectors.toList;
 
 /**
@@ -17,7 +16,7 @@ public class IterativeParallelismImpl implements IterativeParallelism {
                         .filter(Optional::isPresent)
                         .map(Optional::get)
                         .min(comparator)
-        .orElse(null));
+                        .orElse(null));
     }
 
     @Override
@@ -68,37 +67,37 @@ public class IterativeParallelismImpl implements IterativeParallelism {
                 .map(list -> new Worker<>(list, functionForThread))
                 .collect(toList());
 
-        Collection<Thread> threads = workers.stream()
-                .map(Thread::new)
-                .collect(toList());
+        workers.stream()
+            .map(Thread::new)
+            .forEach(thread ->
+            {
+                thread.start();
+                try {
+                    thread.join();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            });
 
-        threads.stream().forEach(Thread::start);
-        threads.stream().forEach(thread -> {
-            try {
-                thread.join();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        });
-
-        List<U> result = workers.stream()
+        return workers.stream()
                 .map(worker -> worker.output)
                 .collect(toList());
-
-        return result;
     }
 
     private <T> List<List<T>> getListsForThreads(int threads, List<T> list) {
         List<List<T>> result = new ArrayList<>();
         int itemsInThread = list.size() / threads;
-        for (int i = 0; i < threads - 1; i++) {
-            result.add(list.subList(i * itemsInThread, (i + 1) * itemsInThread));
+        if (itemsInThread > 0) {
+            for (int i = 0; i < threads - 1; i++) {
+                result.add(list.subList(i * itemsInThread, (i + 1) * itemsInThread));
+            }
         }
         result.add(list.subList((threads - 1) * itemsInThread, list.size()));
         return result;
     }
 
     private class Worker<T, U> implements Runnable {
+
         private T input;
         private Function<T, U> functionForThread;
         private U output;
