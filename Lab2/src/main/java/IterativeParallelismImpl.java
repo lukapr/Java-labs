@@ -63,25 +63,25 @@ public class IterativeParallelismImpl implements IterativeParallelism {
     }
 
     private <T, U> List<U> applyToThread(Collection<T> listsForThreads, Function<T, U> functionForThread) {
-        Collection<Worker<T, U>> workers = listsForThreads.stream()
-                .map(list -> new Worker<>(list, functionForThread))
-                .collect(toList());
-
-        workers.stream()
-            .map(Thread::new)
-            .forEach(thread ->
-            {
-                thread.start();
-                try {
-                    thread.join();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            });
-
-        return workers.stream()
-                .map(worker -> worker.output)
-                .collect(toList());
+        final Worker[] worker = new Worker[]{null};
+        List<U> result = new ArrayList<>();
+                listsForThreads.stream()
+                .map(list -> {
+                    worker[0] = new Worker<>(list, functionForThread);
+                    return worker[0];
+                })
+                .map(Thread::new)
+                .forEach(thread ->
+                {
+                    thread.start();
+                    try {
+                        thread.join();
+                        result.add((U) worker[0].output);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                });
+        return result;
     }
 
     private <T> List<List<T>> getListsForThreads(int threads, List<T> list) {
