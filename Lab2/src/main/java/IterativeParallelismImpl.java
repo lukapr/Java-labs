@@ -2,6 +2,7 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
+import static java.util.stream.Collectors.reducing;
 import static java.util.stream.Collectors.toList;
 
 /**
@@ -80,11 +81,9 @@ public class IterativeParallelismImpl implements IterativeParallelism {
             }
         });
 
-        List<U> result = workers.stream()
+        return workers.stream()
                 .map(worker -> worker.output)
                 .collect(toList());
-
-        return result;
     }
 
     private <T> List<List<T>> getListsForThreads(int threads, List<T> list) {
