@@ -2,10 +2,10 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
-import static java.util.stream.Collectors.reducing;
 import static java.util.stream.Collectors.toList;
 
 /**
+ *
  * Created by pryaly on 11/13/2015.
  */
 public class IterativeParallelismImpl implements IterativeParallelism {
