@@ -71,4 +71,6 @@ public class TestLab2 {
                 parallelism.map(threads, list, Integer::toBinaryString));
         assertEquals(asList("10", "10", "10"), parallelism.map(threads, list2, Integer::toBinaryString));
     }
+
+
 }

@@ -16,7 +16,7 @@ public class IterativeParallelismImpl implements IterativeParallelism {
                         .filter(Optional::isPresent)
                         .map(Optional::get)
                         .min(comparator)
-                        .orElse(null));
+        .orElse(null));
     }
 
     @Override
@@ -63,24 +63,27 @@ public class IterativeParallelismImpl implements IterativeParallelism {
     }
 
     private <T, U> List<U> applyToThread(Collection<T> listsForThreads, Function<T, U> functionForThread) {
-        final Worker[] worker = new Worker[]{null};
-        List<U> result = new ArrayList<>();
-                listsForThreads.stream()
-                .map(list -> {
-                    worker[0] = new Worker<>(list, functionForThread);
-                    return worker[0];
-                })
+        Collection<Worker<T, U>> workers = listsForThreads.stream()
+                .map(list -> new Worker<>(list, functionForThread))
+                .collect(toList());
+
+        Collection<Thread> threads = workers.stream()
                 .map(Thread::new)
-                .forEach(thread ->
-                {
-                    thread.start();
-                    try {
-                        thread.join();
-                        result.add((U) worker[0].output);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                });
+                .collect(toList());
+
+        threads.stream().forEach(Thread::start);
+        threads.stream().forEach(thread -> {
+            try {
+                thread.join();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        });
+
+        List<U> result = workers.stream()
+                .map(worker -> worker.output)
+                .collect(toList());
+
         return result;
     }
 
