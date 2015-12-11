@@ -33,7 +33,7 @@ public class HelloUDPClient {
 
         @Override
         public void run() {
-            try(DatagramSocket socket = new DatagramSocket()) {
+            try (DatagramSocket socket = new DatagramSocket()) {
                 for (int messageNumber = 0; messageNumber < numberOfQueries; messageNumber++) {
                     sendMessage(messageNumber, socket);
                 }
@@ -88,7 +88,9 @@ public class HelloUDPClient {
             String prefix = args[2];
             int numberOfThreads = Integer.valueOf(args[3]);
             int numberOfQueries = Integer.valueOf(args[4]);
-            HelloUDPClient helloUDPClient = new HelloUDPClient(host, port, prefix, numberOfThreads,numberOfQueries);
+            HelloUDPClient helloUDPClient = new HelloUDPClient(host, port, prefix, numberOfThreads, numberOfQueries);
+            System.out.println("Client with host: " + host + " and port: " + port + " is started. Number of threads is " +
+                    numberOfThreads + ". Number of messages in thread is " + numberOfQueries);
             helloUDPClient.start();
         }
     }

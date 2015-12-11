@@ -64,7 +64,7 @@ public class HelloUDPServer {
                 }
             }
         } catch (SocketException e) {
-            throw new Exception("Could not bind server to port "+ port, e);
+            throw new Exception("Could not bind server to port " + port, e);
         }
         stop();
     }
@@ -86,6 +86,7 @@ public class HelloUDPServer {
             int port = Integer.valueOf(args[0]);
             int numberOfThreads = Integer.valueOf(args[1]);
             HelloUDPServer helloUDPServer = new HelloUDPServer(port, numberOfThreads);
+            System.out.println("Server with port: " + port + " is started. Number of threads is " + numberOfThreads);
             helloUDPServer.start();
         }
     }
