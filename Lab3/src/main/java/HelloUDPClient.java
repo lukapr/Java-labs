@@ -2,7 +2,6 @@ import java.io.*;
 import java.net.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
 
 /**
  * Created by pryaly on 12/11/2015.
@@ -35,7 +34,9 @@ public class HelloUDPClient {
         public void run() {
             try (DatagramSocket socket = new DatagramSocket()) {
                 for (int messageNumber = 0; messageNumber < numberOfQueries; messageNumber++) {
-                    sendMessage(messageNumber, socket);
+                    DatagramPacket responsePacket = sendMessage(messageNumber, socket);
+                    String response = new String(responsePacket.getData());
+                    System.out.println("New response received: " + response);
                 }
             } catch (IOException e) {
                 //TODO add Exception
@@ -43,7 +44,7 @@ public class HelloUDPClient {
             }
         }
 
-        private void sendMessage(int messageNumber, DatagramSocket socket) throws IOException {
+        private DatagramPacket sendMessage(int messageNumber, DatagramSocket socket) throws IOException {
             String message = prefix + threadNumber + "_" + messageNumber;
             byte[] outBuf = message.getBytes();
             DatagramPacket messagePacket = new DatagramPacket(outBuf, outBuf.length, address);
@@ -56,10 +57,9 @@ public class HelloUDPClient {
                 socket.receive(responsePacket);
             } catch (SocketTimeoutException e) {
                 System.out.println("Don't get response from the server. Send message again.");
-                sendMessage(messageNumber, socket);
+                responsePacket = sendMessage(messageNumber, socket);
             }
-            String response = new String(responsePacket.getData());
-            System.out.println("New response received \"" + response + "\"");
+            return responsePacket;
         }
     }
 

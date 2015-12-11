@@ -24,7 +24,10 @@ public class HelloUDPServer {
 
         private final DatagramPacket messagePacket;
 
-        public Replier(DatagramPacket messagePacket) {
+        public Replier() throws IOException {
+            byte[] inBuf = new byte[1024];
+            DatagramPacket messagePacket = new DatagramPacket(inBuf, inBuf.length);
+            socket.receive(messagePacket);
             this.messagePacket = messagePacket;
         }
 
@@ -34,7 +37,7 @@ public class HelloUDPServer {
 
                 byte[] data = messagePacket.getData();
                 String message = new String(data, 0, data.length);
-
+                message = message.replaceAll("\0+$", "");
                 System.out.println("Receive new message:  " + message);
 
                 String response = "Hello, " + message;
@@ -55,10 +58,7 @@ public class HelloUDPServer {
             socket = new DatagramSocket(port);
             while (!Thread.interrupted()) {
                 try {
-                    byte[] inBuf = new byte[1024];
-                    DatagramPacket messagePacket = new DatagramPacket(inBuf, 0, 1024);
-                    socket.receive(messagePacket);
-                    executor.execute(new Replier(messagePacket));
+                    executor.execute(new Replier());
                 } catch (IOException e) {
                     System.err.println("Problem with receiving packet: " + e.getMessage());
                 }
