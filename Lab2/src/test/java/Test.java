@@ -26,7 +26,7 @@ public class Test {
         Function<Integer, Integer> function = integer -> integer += 10;
         Predicate predicateLess10 = o -> (int) o < 10;
         Predicate predicateMore0 = o -> (int) o > 0;
-        for (int thread = 1; thread <= 100; thread+=99) {
+        for (int thread = 1; thread <= 3; thread+=2) {
             long startTime = System.currentTimeMillis();
             List mappedList = parallelism.map(thread, res, function);
             System.out.println("Time for Map with " + thread + " threads is: " + (System.currentTimeMillis() - startTime));
