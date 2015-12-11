@@ -35,22 +35,31 @@ public class HelloUDPClient {
         public void run() {
             try(DatagramSocket socket = new DatagramSocket()) {
                 for (int messageNumber = 0; messageNumber < numberOfQueries; messageNumber++) {
-                    String message = prefix + threadNumber + "_" + messageNumber;
-                    byte[] outBuf = message.getBytes();
-                    DatagramPacket messagePacket = new DatagramPacket(outBuf, outBuf.length, address);
-                    socket.send(messagePacket);
-                    System.out.println("New message was sent to server: " + message);
-
-                    byte[] inBuf = new byte[65536];
-                    DatagramPacket responsePacket = new DatagramPacket(inBuf, inBuf.length);
-                    socket.receive(responsePacket);
-                    String response = new String(responsePacket.getData());
-                    System.out.println("New response received \"" + response + "\"");
+                    sendMessage(messageNumber, socket);
                 }
             } catch (IOException e) {
                 //TODO add Exception
                 e.printStackTrace();
             }
+        }
+
+        private void sendMessage(int messageNumber, DatagramSocket socket) throws IOException {
+            String message = prefix + threadNumber + "_" + messageNumber;
+            byte[] outBuf = message.getBytes();
+            DatagramPacket messagePacket = new DatagramPacket(outBuf, outBuf.length, address);
+            socket.send(messagePacket);
+            System.out.println("Message was sent to server: " + message);
+            socket.setSoTimeout(10000);
+            byte[] inBuf = new byte[65536];
+            DatagramPacket responsePacket = new DatagramPacket(inBuf, inBuf.length);
+            try {
+                socket.receive(responsePacket);
+            } catch (SocketTimeoutException e) {
+                System.out.println("Don't get response from the server. Send message again.");
+                sendMessage(messageNumber, socket);
+            }
+            String response = new String(responsePacket.getData());
+            System.out.println("New response received \"" + response + "\"");
         }
     }
 
